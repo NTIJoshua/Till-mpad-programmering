@@ -11,6 +11,15 @@ Servo servoY; // Servo motor for Y-axis
 const int servoXPin = 8; // Pin for controlling X-axis servomotor
 const int servoYPin = 9; // Pin for controlling Y-axis servomotor
 
+const int buffLength = 5;
+int bufferX[buffLength];
+int bufferY[buffLength];
+int indexX=0;
+int indexY=0;
+
+int angleXMed;
+int angleYMed;
+
 // Adjusting parameters
 const int minServoAngle = 0;   // Smallest angle the servo can move to.
 const int maxServoAngle = 179; // Biggest angle the servo can move to.
@@ -44,9 +53,28 @@ void loop() {
   float angleX = atan2(event.acceleration.y, event.acceleration.z) * 180.0 / PI; // X (in degrees)
   float angleY = atan2(event.acceleration.x, event.acceleration.z) * 180.0 / PI; // Y (in degrees)
 
+
+  bufferX[indexX]=angleX;
+  bufferY[indexY]=angleY;
+
+  // Use a modulo operator to index 
+  indexX=(indexX+1)%buffLength;
+  indexY=(indexY+1)%buffLength;
+
+  // Make an average so the motion is smoother; a filter of sorts.
+  for(int i=0; i < buffLength ; i++) {
+    angleXMed = angleXMed + bufferX[i];
+  }
+  angleXMed = angleXMed/buffLength;
+
+  for(int i=0; i < buffLength ; i++) {
+    angleYMed = angleYMed + bufferY[i];
+  }
+  angleYMed = angleYMed/buffLength;
+
   // Convert angles to servo friendly values, between min and max angles.
-  int servoXAngle = map(angleX, -90, 90, minServoAngle, maxServoAngle);
-  int servoYAngle = map(angleY, -90, 90, minServoAngle, maxServoAngle);
+  int servoXAngle = map(angleXMed, -90, 90, minServoAngle, maxServoAngle);
+  int servoYAngle = map(angleYMed, -90, 90, minServoAngle, maxServoAngle);
 
   // Constrain angles for safety.
   servoXAngle = constrain(servoXAngle, minServoAngle, maxServoAngle);
@@ -63,5 +91,5 @@ void loop() {
   servoY.write(servoYAngle);
 
   // Short pause for stability. 
-  delay(100);
+  delay(1);
 }
