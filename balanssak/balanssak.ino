@@ -1,3 +1,13 @@
+/*
+Balancing plate
+
+Balances a plate with the use of an accelerometer.
+
+Created 7 February 2025
+ by Joshua Odgowu
+*/
+
+// Libraries
 #include <Adafruit_LIS3DH.h> // Include the library for LIS3DH
 #include <Adafruit_Sensor.h> // Needed for sensors
 #include <Servo.h> // Include library to use servo motors
@@ -11,6 +21,7 @@ Servo servoY; // Servo motor for Y-axis
 const int servoXPin = 8; // Pin for controlling X-axis servomotor
 const int servoYPin = 9; // Pin for controlling Y-axis servomotor
 
+// Buffer variables
 const int buffLength = 5;
 int bufferX[buffLength];
 int bufferY[buffLength];
